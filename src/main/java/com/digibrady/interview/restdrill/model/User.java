@@ -2,84 +2,45 @@ package com.digibrady.interview.restdrill.model;
 
 public class User {
 
-	private long id;
+	private final int id;
 	
-	private String name;
+	private final String name;
 	
-	private int age;
+	private final String job;
 	
-	private double salary;
+	private final double salary;
 
-	public User(){
-		id=0;
-	}
 	
-	public User(long id, String name, int age, double salary){
+	public User(int id, String name, String job, double salary){
 		this.id = id;
 		this.name = name;
-		this.age = age;
+		this.job = job;
 		this.salary = salary;
 	}
-	
-	public long getId() {
+
+	public User(int id, User user){
+		this.id = id;
+		this.name = user.getName();
+		this.job = user.getJob();
+		this.salary = user.getSalary();
+	}
+
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+
+	public String getJob() {
+		return job;
 	}
 
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
 
 	public double getSalary() {
 		return salary;
 	}
-
-	public void setSalary(double salary) {
-		this.salary = salary;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (id != other.id)
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", age=" + age
-				+ ", salary=" + salary + "]";
-	}
-
-
 }

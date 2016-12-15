@@ -12,15 +12,17 @@ Spring Boot is not used here.  Spring Boot abstracts away much of the configurat
 * 100% Java Spring Config with annotations
 * Modern Spring web app layout: No web.xml, servlet 3.1 tech
 * Simple user RESTful API
+* Simple thread-safe data repository as ConcurrentHashMap
+* Test coverage using Spring MVC Mock, Mockito, and Jayway for JSON validation
 
 ## Usage
 
-Try to recreate this project from scratch.
+Try to recreate this project from memory.
 
 ```bash
 mvn clean complie package
 java -jar target/restdrill.jar
-curl http://localhost:8080/user/1
+curl http://localhost:8080/api/user/1
 {"id":1,"name":"FuBar","age":35,"salary":150.00}
 ````
 
