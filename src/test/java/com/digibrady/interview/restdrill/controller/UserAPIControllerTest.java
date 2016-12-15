@@ -74,6 +74,19 @@ public class UserAPIControllerTest {
 		    .andExpect(MockMvcResultMatchers.header().string("location", Matchers.containsString(locHeader)));
 	}
 
+	@Test
+	public void updateUser() throws Exception {
+		User mockUser = createMockUsers(1).get(0);
+		Mockito.when(mockUserRepo.update(Mockito.any(User.class))).thenReturn(mockUser);
+
+		ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.put("/api/user/" + mockUser.getId())
+		    .contentType(MediaType.APPLICATION_JSON)
+		    .content(asJsonString(mockUser)))
+		    .andExpect(MockMvcResultMatchers.status().isOk());
+
+		assertMockUser(actions, mockUser, true);
+	}
+
 	private List<User> createMockUsers(int count) {
 		List<User> users = new ArrayList<>();
 		for (int idx = 1; idx <= count; idx++) {

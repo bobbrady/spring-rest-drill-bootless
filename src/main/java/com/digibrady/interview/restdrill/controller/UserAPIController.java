@@ -48,4 +48,11 @@ public class UserAPIController {
 		headers.setLocation(uriBuilder.path("api/user/{id}").buildAndExpand(newUser.getId()).toUri());
 		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
+		System.out.format("Creating User from Request Body: %s%n", user);
+		userRepo.update(user);
+		return new ResponseEntity<User>(user, HttpStatus.OK);
+	}
 }
