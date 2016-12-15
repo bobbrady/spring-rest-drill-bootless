@@ -36,8 +36,8 @@ public class UserRespository implements IUserRepository {
 
 	@Override
 	public User create(User user) {
-		User newUser = new User(atomicId.getAndIncrement(), user);
-		users.put(user.getId(), user);
+		User newUser = new User(atomicId.incrementAndGet(), user);
+		users.put(newUser.getId(), newUser);
 		return newUser;
 	}
 

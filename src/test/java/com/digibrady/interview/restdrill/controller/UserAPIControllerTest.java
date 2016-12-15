@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.digibrady.interview.restdrill.data.IUserRepository;
 import com.digibrady.interview.restdrill.model.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserAPIControllerTest {
 
@@ -50,7 +51,7 @@ public class UserAPIControllerTest {
 	}
 
 	@Test
-	public void getUsers() throws Exception {
+	public void getUser() throws Exception {
 		User mockUser = createMockUsers(1).get(0);
 		Mockito.when(mockUserRepo.getUserById(mockUser.getId())).thenReturn(mockUser);
 
@@ -59,6 +60,18 @@ public class UserAPIControllerTest {
 		    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 
 		assertMockUser(actions, mockUser, true);
+	}
+
+	@Test
+	public void createUser() throws Exception {
+		User mockUser = createMockUsers(1).get(0);
+		Mockito.when(mockUserRepo.create(Mockito.any(User.class))).thenReturn(mockUser);
+		String locHeader = String.format("/api/user/%d", mockUser.getId());
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/user").contentType(MediaType.APPLICATION_JSON)
+		    .content(asJsonString(mockUser)))
+		    .andExpect(MockMvcResultMatchers.status().isCreated())
+		    .andExpect(MockMvcResultMatchers.header().string("location", Matchers.containsString(locHeader)));
 	}
 
 	private List<User> createMockUsers(int count) {
@@ -89,5 +102,14 @@ public class UserAPIControllerTest {
 		actions.andExpect(MockMvcResultMatchers.jsonPath(path + ".job", Matchers.is("job-" + mockUser.getId())));
 		actions.andExpect(MockMvcResultMatchers.jsonPath(path + ".salary", Matchers.is(salary)));
 
+	}
+
+	public static String asJsonString(final Object obj) {
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			return mapper.writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
