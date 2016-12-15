@@ -1,5 +1,7 @@
 package com.digibrady.interview.restdrill.model;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,5 +45,38 @@ public class User {
 
 	public double getSalary() {
 		return salary;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, job, salary);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		return Objects.equals(this.id, other.id) && Objects.equals(this.name, other.name)
+		    && Objects.equals(this.job, other.job) && Objects.equals(this.salary, other.salary);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [id=");
+		builder.append(id);
+		builder.append(", name=");
+		builder.append(name);
+		builder.append(", job=");
+		builder.append(job);
+		builder.append(", salary=");
+		builder.append(salary);
+		builder.append("]");
+		return builder.toString();
 	}
 }

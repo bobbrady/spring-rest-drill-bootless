@@ -55,7 +55,7 @@ public class UserAPIControllerTest {
 		User mockUser = createMockUsers(1).get(0);
 		Mockito.when(mockUserRepo.getUserById(mockUser.getId())).thenReturn(mockUser);
 
-		ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get("/api/user/" + mockUser.getId()))
+		ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get("/api/user/{id}", mockUser.getId()))
 		    .andExpect(MockMvcResultMatchers.status().isOk())
 		    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 
@@ -77,14 +77,45 @@ public class UserAPIControllerTest {
 	@Test
 	public void updateUser() throws Exception {
 		User mockUser = createMockUsers(1).get(0);
+		Mockito.when(mockUserRepo.getUserById(mockUser.getId())).thenReturn(mockUser);
 		Mockito.when(mockUserRepo.update(Mockito.any(User.class))).thenReturn(mockUser);
 
-		ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.put("/api/user/" + mockUser.getId())
+		ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.put("/api/user/{id}", mockUser.getId())
 		    .contentType(MediaType.APPLICATION_JSON)
 		    .content(asJsonString(mockUser)))
 		    .andExpect(MockMvcResultMatchers.status().isOk());
 
 		assertMockUser(actions, mockUser, true);
+	}
+
+	@Test
+	public void updateUserNotFound() throws Exception {
+		User mockUser = createMockUsers(1).get(0);
+		Mockito.when(mockUserRepo.getUserById(mockUser.getId())).thenReturn(null);
+
+		mockMvc.perform(MockMvcRequestBuilders.put("/api/user/{id}", mockUser.getId())
+		    .contentType(MediaType.APPLICATION_JSON)
+		    .content(asJsonString(mockUser)))
+		    .andExpect(MockMvcResultMatchers.status().isNotFound());
+	}
+
+	@Test
+	public void deleteUser() throws Exception {
+		User mockUser = createMockUsers(1).get(0);
+		Mockito.when(mockUserRepo.getUserById(mockUser.getId())).thenReturn(mockUser);
+		Mockito.when(mockUserRepo.delete(mockUser.getId())).thenReturn(true);
+
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/{id}", mockUser.getId()))
+		    .andExpect(MockMvcResultMatchers.status().isNoContent());
+	}
+
+	@Test
+	public void deleteUserNotFound() throws Exception {
+		int id = 1;
+		Mockito.when(mockUserRepo.getUserById(id)).thenReturn(null);
+
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/user/{id}", id))
+		    .andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 
 	private List<User> createMockUsers(int count) {

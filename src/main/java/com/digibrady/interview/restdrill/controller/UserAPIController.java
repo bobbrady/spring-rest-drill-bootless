@@ -51,8 +51,28 @@ public class UserAPIController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
-		System.out.format("Creating User from Request Body: %s%n", user);
-		userRepo.update(user);
-		return new ResponseEntity<User>(user, HttpStatus.OK);
+		System.out.format("Updating User from Request Body: %s%n", user);
+		if (userRepo.getUserById(id) == null) {
+			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+		} else {
+			userRepo.update(user);
+			return new ResponseEntity<User>(user, HttpStatus.OK);
+		}
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<User> delete(@PathVariable int id) {
+		System.out.format("Deleting User %d%n", id);
+		User user = userRepo.getUserById(id);
+		for (User repoUser : userRepo.getUsers()) {
+			System.out.format("User %s equal to found user: %b%n", repoUser.toString(), repoUser.equals(user));
+		}
+		if (user == null) {
+			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+		} else {
+			System.out.format("Deleting found User %s%n", user.toString());
+			userRepo.delete(id);
+			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+		}
 	}
 }

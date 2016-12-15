@@ -51,7 +51,7 @@ public class UserRespository implements IUserRepository {
 	public boolean delete(int id) {
 		User user = users.get(id);
 		if (user != null) {
-			users.remove(user);
+			users.remove(user.getId());
 			return true;
 		} else {
 			return false;
