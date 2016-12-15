@@ -49,6 +49,18 @@ public class UserAPIControllerTest {
 		assertMockUsers(actions, mockUsers);
 	}
 
+	@Test
+	public void getUsers() throws Exception {
+		User mockUser = createMockUsers(1).get(0);
+		Mockito.when(mockUserRepo.getUserById(mockUser.getId())).thenReturn(mockUser);
+
+		ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get("/api/user/" + mockUser.getId()))
+		    .andExpect(MockMvcResultMatchers.status().isOk())
+		    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+
+		assertMockUser(actions, mockUser, true);
+	}
+
 	private List<User> createMockUsers(int count) {
 		List<User> users = new ArrayList<>();
 		for (int idx = 1; idx <= count; idx++) {
@@ -60,12 +72,22 @@ public class UserAPIControllerTest {
 	}
 
 	private void assertMockUsers(ResultActions actions, List<User> mockUsers) throws Exception {
-		for (int idx = 0; idx < mockUsers.size(); idx++) {
-			double salary = (idx + 1) * 40;
-			actions.andExpect(MockMvcResultMatchers.jsonPath("$[" + idx + "].id", Matchers.is(idx + 1)));
-			actions.andExpect(MockMvcResultMatchers.jsonPath("$[" + idx + "].job", Matchers.is("job-" + (idx + 1))));
-			actions.andExpect(MockMvcResultMatchers.jsonPath("$[" + idx + "].salary", Matchers.is(salary)));
+		for (User mockUser : mockUsers) {
+			assertMockUser(actions, mockUser, false);
 		}
 	}
 
+	private void assertMockUser(ResultActions actions, User mockUser, boolean isSingle) throws Exception {
+		double salary = mockUser.getId() * 40;
+		String path = null;
+		if (isSingle) {
+			path = "$";
+		} else {
+			path = String.format("$[%d]", (mockUser.getId() - 1));
+		}
+		actions.andExpect(MockMvcResultMatchers.jsonPath(path + ".id", Matchers.is(mockUser.getId())));
+		actions.andExpect(MockMvcResultMatchers.jsonPath(path + ".job", Matchers.is("job-" + mockUser.getId())));
+		actions.andExpect(MockMvcResultMatchers.jsonPath(path + ".salary", Matchers.is(salary)));
+
+	}
 }
